@@ -4,16 +4,16 @@ namespace Database\Seeders;
 
 use App\Models\Comment;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class CommentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        Comment::factory()->count(300)->create();
+        DB::table('comments')->truncate();
+
+        $comments = Comment::factory()->count(300)->make();
+
+        DB::table('comments')->insert($comments->toArray());
     }
 }
