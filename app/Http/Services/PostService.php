@@ -39,15 +39,19 @@ class PostService
     {
         $faker = Factory::create();
         $post = Post::find($id);
-        return (bool)$post->update([
-            'description' => $data['description'] ?: null,
-            'tags' => $data['tags'] ?: null,
-            'img_url' => $faker->url(),
-            'min_img_url' => $faker->url(),
-        ]);
+        if($post){
+            $post->update([
+                'description' => $data['description'] ?: null,
+                'tags' => $data['tags'] ?: null,
+                'img_url' => $faker->url(),
+                'min_img_url' => $faker->url(),
+            ]);
+            return true;
+        }
+        return false;
     }
 
-    public function deletePostById(int $id): bool
+    public function deletePostById(int $id): int
     {
         return Post::destroy($id);
     }

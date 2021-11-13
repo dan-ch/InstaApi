@@ -22,7 +22,7 @@ class CommentController extends Controller
     {
         $data = $request->validated();
         $comment = Comment::create($data);
-        $location = '/'.$request->path().'/'.$comment['id'];
+        $location = '/api/comments/'.$comment['id'];
         return $this->success(['location' => $location], 201);
     }
 
@@ -53,7 +53,7 @@ class CommentController extends Controller
     {
         $result = Comment::destroy($commentId);
         if($result)
-            return $this->success(null,204);
+            return $this->success([],204);
         return $this->failure('Comment not found', 404);
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Post;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Post\StorePostRequest;
@@ -23,7 +23,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = $this->postService->getAllPosts();
-        return $this->success('All posts returned', $posts);
+        return $this->success($posts);
     }
 
 
@@ -31,7 +31,7 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $post = '/api/posts/'.$this->postService->createPost($data, 2)['id'];
-        return $this->success('Post crested', $post, 201);
+        return $this->success($post, 201);
     }
 
 
@@ -40,7 +40,7 @@ class PostController extends Controller
         $result = $this->postService->getPostById($postId);
         if(!$result)
             return $this->failure("Post not found", 404);
-        return $this->success('Post returned', $result);
+        return $this->success($result);
     }
 
 
@@ -49,15 +49,15 @@ class PostController extends Controller
         $data = $request->validated();
         $post = $this->postService->updatePost($data, $postId);
         if(!$post)
-            return $this->failure("Post not updated");
-        return $this->success("Post updated", []);
+            return $this->failure("Post not found", 404);
+        return $this->success([], 204);
     }
 
     public function destroy(int $postId)
     {
         $result = $this->postService->deletePostById($postId);
-        if($result)
-            return $this->success("Post deleted", []);
-        return $this->failure('Post not found', 400);
+        if(!$result)
+            return $this->failure('Post not found', 404);
+        return $this->success([], 204);
     }
 }
