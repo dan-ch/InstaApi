@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +24,7 @@ Route::get('/test', function () {
         ->header('Content-Type', 'text/plain');
 });
 
-// POSTS Routes
+// Posts routes
 Route::group([
     'prefix' => '/posts',
     'as' => 'posts.',
@@ -41,3 +42,7 @@ Route::group([
     Route::match(['patch', 'put'], '/{postId}', [PostController::class, 'update']);
 
 });
+
+// Comments routes
+
+Route::apiResource('/comments', CommentController::class);
