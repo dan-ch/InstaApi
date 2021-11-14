@@ -9,6 +9,8 @@ use App\Http\Requests\Post\StorePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
 use App\Http\Services\PostService;
 use App\Http\Traits\ResponseApi;
+use App\Models\Post;
+
 class PostController extends Controller
 {
     use ResponseApi;

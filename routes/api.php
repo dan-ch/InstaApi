@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 
@@ -46,3 +47,5 @@ Route::group([
 // Comments routes
 
 Route::apiResource('/comments', CommentController::class);
+
+Route::apiResource('/users', UserController::class);

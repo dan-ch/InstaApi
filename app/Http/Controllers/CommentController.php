@@ -14,7 +14,7 @@ class CommentController extends Controller
 
     public function index()
     {
-        return Comment::query()->paginate(10);
+        return Comment::all();
     }
 
 
