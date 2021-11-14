@@ -15,12 +15,12 @@ class PostService
 
     public function getAllPosts(): array|Collection
     {
-        return Post::all();
+        return Post::query()->where('id', '<=', '3')->get();
     }
 
     public function getPostById(int $id)
     {
-        return Post::find($id);
+        return Post::query()->where('id', $id)->with('author')->get();
     }
 
     public function createPost(array $data, int $authorId): Post

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -20,10 +21,10 @@ use App\Http\Controllers\PostController;
 //    return $request->user();
 //});
 
-Route::get('/test', function () {
-    return response('test', 200)
-        ->header('Content-Type', 'text/plain');
+Route::middleware('auth:sanctum')->get('/test', function (){
+    return response()->json('Protected route', 201);
 });
+
 
 // Posts routes
 Route::group([
@@ -48,4 +49,12 @@ Route::group([
 
 Route::apiResource('/comments', CommentController::class);
 
+
+// Users routes
 Route::apiResource('/users', UserController::class);
+
+
+// Auth routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);

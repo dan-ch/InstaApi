@@ -10,6 +10,7 @@ use App\Http\Requests\Post\UpdatePostRequest;
 use App\Http\Services\PostService;
 use App\Http\Traits\ResponseApi;
 use App\Models\Post;
+use Illuminate\Http\JsonResponse;
 
 class PostController extends Controller
 {
@@ -22,7 +23,7 @@ class PostController extends Controller
         $this->postService = $postService;
     }
 
-    public function index()
+    public function index(): JsonResponse
     {
         $posts = $this->postService->getAllPosts();
         return $this->success($posts);
