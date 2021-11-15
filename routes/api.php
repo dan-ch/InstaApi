@@ -58,3 +58,6 @@ Route::apiResource('/users', UserController::class);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->post('/logout', [AuthController::class, 'logout']);
+
+Route::get('/login/{provider}', [AuthController::class, 'redirectToProvider']);
+Route::get('/login/{provider}/callback', [AuthController::class, 'providerCallback']);

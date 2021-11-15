@@ -6,8 +6,12 @@ use App\Http\Requests\User\LoginUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Traits\ResponseApi;
 use App\Models\User;
+use Carbon\Carbon;
+use GuzzleHttp\Exception\ClientException;
 use Hash;
 use Illuminate\Http\JsonResponse;
+use Laravel\Socialite\Facades\Socialite;
+use Nette\Utils\Random;
 
 class AuthController extends Controller
 {
@@ -56,5 +60,53 @@ class AuthController extends Controller
         auth()->user()->tokens()->delete();
 
         return $this->success(['message' => 'Logged out']);
+    }
+
+    public function redirectToProvider(string $provider): JsonResponse
+    {
+        if ($this->validateProvider($provider)) {
+            return $this->failure(['message' => 'Invalid provider. Use Google, Github or TikTok']);
+        }
+
+        return Socialite::driver($provider)->stateless()->redirect();
+    }
+
+    public function providerCallback(string $provider)
+    {
+        $validated = $this->validateProvider($provider);
+        if (!$validated) {
+            return $this->failure(['message' => 'Invalid provider. Use Google, Github or TikTok']);
+        }
+        try {
+            $user = Socialite::driver($provider)->stateless()->user();
+        } catch (ClientException $exception) {
+            return $this->failure(['error' => 'Invalid credentials provided.'], 422);
+        }
+
+        //dd($user);
+        $userCreated = User::query()->firstOrCreate(
+            [
+                'email' => $user->getEmail()
+            ],
+            [
+                'email_verified_at' => Carbon::now(),
+                'name' => $user->getName() ?? $user->user['login'],
+                'avatar' => $user->getAvatar(),
+                'password' => Hash::make(Random::generate(15)),
+            ]
+        );
+
+        $userCreated->tokens()->delete();
+        $token = $userCreated->createToken('InstaKilogramApiToken')->plainTextToken;
+
+        return $this->success([
+            'user' => $userCreated,
+            'token' => $token
+        ]);
+    }
+
+    private function validateProvider($provider)
+    {
+        return in_array($provider, ['facebook', 'github', 'google', 'tiktok']);
     }
 }
