@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use GuzzleHttp\Exception\ClientException;
 use Hash;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 use Nette\Utils\Random;
 
@@ -62,28 +64,39 @@ class AuthController extends Controller
         return $this->success(['message' => 'Logged out']);
     }
 
-    public function redirectToProvider(string $provider): JsonResponse
+    public function redirectToProvider(string $provider)
     {
-        if ($this->validateProvider($provider)) {
-            return $this->failure(['message' => 'Invalid provider. Use Google, Github or TikTok']);
+        if (!$this->validateProvider($provider)) {
+            return $this->failure(['message' => 'Invalid provider. Use Google or Github']);
         }
 
         return Socialite::driver($provider)->stateless()->redirect();
     }
 
-    public function providerCallback(string $provider)
+    public function providerCallback(Request $request, string $provider)
     {
         $validated = $this->validateProvider($provider);
         if (!$validated) {
             return $this->failure(['message' => 'Invalid provider. Use Google, Github or TikTok']);
         }
+        $token = $request->input("token");
         try {
-            $user = Socialite::driver($provider)->stateless()->user();
+            if($provider == 'github'){
+                $token = Http::withHeaders([
+                    'Accept' => 'application/json'
+                ])->post('https://github.com/login/oauth/access_token', [
+                    'code' => $token,
+                    'client_id' => 'cef6e2a53464bfd04904',
+                    'client_secret' => 'c059e9c45b31a8d4ffb02ef0be0b4dd427a58243',
+                ])->json()['access_token'];
+            }
+            $user = Socialite::driver($provider)->stateless()->userFromToken($token);
         } catch (ClientException $exception) {
             return $this->failure(['error' => 'Invalid credentials provided.'], 422);
         }
 
-        //dd($user);
+        //$userCreated = User::query()->firstWhere('email', $user->getEmai());
+
         $userCreated = User::query()->firstOrCreate(
             [
                 'email' => $user->getEmail()
@@ -105,8 +118,12 @@ class AuthController extends Controller
         ]);
     }
 
+    public function passwordReset(){
+
+    }
+
     private function validateProvider($provider)
     {
-        return in_array($provider, ['facebook', 'github', 'google', 'tiktok']);
+        return in_array($provider, ['github', 'google']);
     }
 }
