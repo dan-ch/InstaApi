@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Traits\ResponseApi;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -30,13 +31,12 @@ class UserController extends Controller
         return $this->failure('User not found', 404);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function posts(int $userId){
+        $result = Post::query()->where('author_id', '=', $userId)->get();
+        return $this->success($result);
+    }
+
+
     public function update(Request $request, $id)
     {
         return null;

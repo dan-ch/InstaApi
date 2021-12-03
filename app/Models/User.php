@@ -16,6 +16,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'email_verified_at'
     ];
 
 
@@ -35,5 +36,17 @@ class User extends Authenticatable
 
     public function posts(){
         return $this->hasMany(Post::class, 'author_id');
+    }
+
+    public function followers(){
+        return $this->belongsToMany(User::class, 'follow', '', '', '' ,'');
+    }
+
+    public function followed(){
+        return $this->belongsToMany(User::class, 'follow', '', '', '' ,'');
+    }
+
+    public function liked(){
+        return $this->belongsToMany(Post::class, 'likes', '', '', '' ,'');
     }
 }

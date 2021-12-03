@@ -17,12 +17,23 @@ class Post extends Model
         'author_id'
     ];
 
+    protected $casts = [
+        'author_id' => 'integer',
+        'likes_count' => 'integer',
+    ];
+
     public function comments(){
         return $this->hasMany(Comment::class);
     }
 
     public function author(){
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function likes(){
+        return $this->belongsToMany(User::class, 'likes');
+//        return $this->belongsToMany(User::class, 'likes', 'kluczObcyTegoModeluWPivotTable',
+//            'kluczObcyTegoModeluPowiazanego(np.User)WPivotTable', '' ,'');
     }
 
 }

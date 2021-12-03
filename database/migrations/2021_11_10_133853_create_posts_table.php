@@ -19,7 +19,7 @@ class CreatePostsTable extends Migration
             $table->string('img_url');
             $table->string('min_img_url');
             $table->string('tags')->nullable();
-            $table->integer('author_id');
+            $table->bigInteger('author_id');
             $table->timestamps();
         });
     }
