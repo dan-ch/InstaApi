@@ -10,8 +10,8 @@ class CreateFollowsTable extends Migration
     public function up()
     {
         Schema::create('follows', function (Blueprint $table) {
-            $table->foreignId('follower_id')->constrained('users');
-            $table->foreignId('followed_id')->constrained('users');
+            $table->foreignId('follower_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('followed_id')->constrained('users')->cascadeOnDelete();
             $table->primary(['follower_id', 'followed_id']);
         });
     }
@@ -19,6 +19,6 @@ class CreateFollowsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('follow');
+        Schema::dropIfExists('follows');
     }
 }
