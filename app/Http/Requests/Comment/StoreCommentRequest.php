@@ -23,11 +23,14 @@ class StoreCommentRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules =  [
             'content' => ['required', 'string'],
-            'post_id' => ['required', 'integer', 'exists:posts,id'],
-            'author_id' => ['required', 'integer'], //'exists:users,id'
-            'parent_comment_id' => ['nullable', 'integer', 'exists:comments,id'],
-        ];
+            'post_id' => ['required_without:parent_comment_id', 'integer', 'exists:posts,id'],
+            ];
+            if(!$this->request->get('post_id')){
+                $rules['parent_comment_id'] = ['required_without:post_id', 'integer', 'exists:comments,id'];
+            }
+            return $rules;
+
     }
 }

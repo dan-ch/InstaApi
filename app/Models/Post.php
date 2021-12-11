@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $fillable = [
         'description',
@@ -20,7 +21,13 @@ class Post extends Model
     protected $casts = [
         'author_id' => 'integer',
         'likes_count' => 'integer',
+        'comments_count' => 'int'
     ];
+
+    public function isLiked(int $authId){
+        $post = $this->likes()->where('id', '=', $authId)->first();
+        return (bool) $post;
+    }
 
     public function comments(){
         return $this->hasMany(Comment::class);
@@ -32,8 +39,6 @@ class Post extends Model
 
     public function likes(){
         return $this->belongsToMany(User::class, 'likes');
-//        return $this->belongsToMany(User::class, 'likes', 'kluczObcyTegoModeluWPivotTable',
-//            'kluczObcyTegoModeluPowiazanego(np.User)WPivotTable', '' ,'');
     }
 
 }
