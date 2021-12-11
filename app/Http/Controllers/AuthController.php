@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\LoginUserRequest;
+use App\Http\Requests\User\PasswordResetRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Traits\ResponseApi;
 use App\Models\User;
@@ -11,8 +12,10 @@ use GuzzleHttp\Exception\ClientException;
 use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
+use Mockery\Generator\StringManipulation\Pass\Pass;
 use Nette\Utils\Random;
 
 class AuthController extends Controller
@@ -118,8 +121,12 @@ class AuthController extends Controller
         ]);
     }
 
-    public function passwordReset(){
-
+    public function passwordChange(PasswordResetRequest $request){
+        $data = $request->validated();
+        $user = Auth::user();
+        $user->password = Hash::make($data['password']);
+        $user->save();
+        return $this->success(['chuj' => 'wielki']);
     }
 
     private function validateProvider($provider)

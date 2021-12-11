@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class PasswordResetRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class PasswordResetRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,13 @@ class PasswordResetRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'password' => ['required', 'confirmed', 'max:15', Password::min(6)
+                ->letters()
+                ->numbers()
+                ->symbols()
+                ->mixedCase()
+                ->uncompromised()
+            ]
         ];
     }
 }
