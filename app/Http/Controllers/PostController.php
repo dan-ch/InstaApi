@@ -8,10 +8,9 @@ use App\Http\Requests\Post\StorePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
 use App\Http\Traits\ResponseApi;
 use App\Models\Post;
-use Faker\Factory;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -21,11 +20,11 @@ class PostController extends Controller
     public function index(): JsonResponse
     {
         $user = Auth::user();
-        $posts = Post::query()->where('id', '<=', '8')->withCount('likes')
-            ->with(['author', 'comments.author'])->get();
-        foreach ($posts as $post){
-            $post->setAttribute('isLiked', $post->isLiked($user->id));
-        }
+        $posts = Post::query()
+            ->whereIn('author_id', $user->followed()->pluck('followed_id'))
+            ->with('author')
+            ->orderByDesc('created_at')
+            ->paginate(10);
         return $this->success($posts);
     }
 
@@ -34,8 +33,7 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $user = Auth::user();
-        $path = Storage::disk('public')->put('images', $data['photo']);
-        Storage::put('images', $data['photo']);
+        $path = Storage::put('images', $data['photo'], 'public');
         $post =  Post::create([
             'description' => $data['description'] ?? null,
             'tags' => $data['tags'] ?? null,
@@ -45,6 +43,7 @@ class PostController extends Controller
         ]);
         $path = '/api/posts/'.$post['id'];
         return $this->success($path, 201);
+
     }
 
 
@@ -55,8 +54,24 @@ class PostController extends Controller
             ->withCount('likes')->first();
         if(!$result)
             return $this->failure("Post not found", 404);
-        $isLikedResult = $result->setAttribute('isLiked', $result->isLiked($user->id));
+        //$isLikedResult = $result->setAttribute('isLiked', $result->isLiked($user->id));
+        $isLikedResult = $result;
         return $this->success($isLikedResult);
+    }
+
+
+    public function photo(int $postId)
+    {
+        $user = Auth::user();
+        $post = Post::query()->where('id', $postId)->first();
+        if($post){
+            $photo = Storage::get('images/'.pathinfo($post->img_url, PATHINFO_BASENAME));
+            $post->setAttribute('photo', json_encode($photo));
+            $response = Response::make($photo, 200);
+            $response->header('Content-Type', 'multipart/form-data');
+            return $response;
+        }
+        return $this->failure("Post not found", 404);
     }
 
 
@@ -64,14 +79,13 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $post = Post::find($postId);
-        Storage::put('images', $data['photo']);
         if($post){
-            $post->update([
-                'description' => $data['description'] ?: null,
-                'tags' => $data['tags'] ?: null,
-                'img_url' => '',
-                'min_img_url' => '',
-            ]);
+            if($data['photo']){
+                Storage::delete('images/'.pathinfo($post->img_url, PATHINFO_BASENAME));
+                $path = Storage::put('images', $data['photo'], 'public');
+                $post->img_url = $path;
+            }
+            $post->update($data);
             return $this->success([], 204);
         }
         return $this->failure("Post not found", 404);
@@ -88,9 +102,5 @@ class PostController extends Controller
     public function like(int $postId){
         $user = Auth::user();
         Post::query()->where('id', '=', $postId)->first()->likes()->toggle($user->id);
-    }
-
-    public function photo (Request $request){
-      return $this->success(["sdsd" => "dsa"], 222);
     }
 }

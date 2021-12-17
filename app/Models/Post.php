@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Scout\Searchable;
 
 class Post extends Model
@@ -21,8 +22,23 @@ class Post extends Model
     protected $casts = [
         'author_id' => 'integer',
         'likes_count' => 'integer',
-        'comments_count' => 'int'
+        'comments_count' => 'integer'
     ];
+
+    protected $withCount = [
+        'likes',
+        'comments'
+    ];
+
+    protected $appends =[
+        'isLiked'
+    ];
+
+
+    public function getIsLikedAttribute(){
+        $userId = Auth::id();
+        return $this->isLiked($userId);
+    }
 
     public function isLiked(int $authId){
         $post = $this->likes()->where('id', '=', $authId)->first();

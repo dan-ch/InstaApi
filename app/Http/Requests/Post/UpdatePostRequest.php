@@ -26,8 +26,9 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'description' => 'required|string',
-            'tags' => 'required|string'
+            'description' => ['sometimes', 'string'],
+            'tags' => ['sometimes', 'string'],
+            'photo' => ['sometimes', 'image'],
         ];
     }
 }
