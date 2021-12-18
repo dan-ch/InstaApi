@@ -22,7 +22,8 @@ class Post extends Model
     protected $casts = [
         'author_id' => 'integer',
         'likes_count' => 'integer',
-        'comments_count' => 'integer'
+        'comments_count' => 'integer',
+        'created_at' => 'timestamp'
     ];
 
     protected $withCount = [

@@ -22,7 +22,7 @@ class PostController extends Controller
         $user = Auth::user();
         $posts = Post::query()
             ->whereIn('author_id', $user->followed()->pluck('followed_id'))
-            ->with('author')
+            ->with(['author', 'comments.author'])
             ->orderByDesc('created_at')
             ->paginate(10);
         return $this->success($posts);
@@ -39,7 +39,6 @@ class PostController extends Controller
             'tags' => $data['tags'] ?? null,
             'author_id' => $user->id,
             'img_url' => url('storage/'.$path),
-            'min_img_url' => '$faker->url()',
         ]);
         $path = '/api/posts/'.$post['id'];
         return $this->success($path, 201);
@@ -49,12 +48,10 @@ class PostController extends Controller
 
     public function show(int $postId)
     {
-        $user = Auth::user();
         $result = Post::query()->where('id', $postId)->with('author')
             ->withCount('likes')->first();
         if(!$result)
             return $this->failure("Post not found", 404);
-        //$isLikedResult = $result->setAttribute('isLiked', $result->isLiked($user->id));
         $isLikedResult = $result;
         return $this->success($isLikedResult);
     }

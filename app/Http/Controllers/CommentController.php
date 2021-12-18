@@ -7,6 +7,7 @@ use App\Http\Requests\Comment\UpdateCommentRequest;
 use App\Http\Traits\ResponseApi;
 use App\Models\Comment;
 use Illuminate\Http\ResponseTrait;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -20,16 +21,18 @@ class CommentController extends Controller
 
     public function store(StoreCommentRequest $request)
     {
+        $userId = Auth::id();
         $data = $request->validated();
+        $data['author_id'] = $userId;
         $comment = Comment::create($data);
-        $location = '/api/comments/'.$comment['id'];
+        $location = '/comments/'.$comment['id'];
         return $this->success(['location' => $location], 201);
     }
 
 
     public function show(int $commentId)
     {
-       $comment = Comment::find($commentId);
+       $comment = Comment::query()->with('author')->find($commentId);
        if($comment)
            return $this->success($comment);
        return $this->failure('Comment not found', 404);
@@ -45,13 +48,13 @@ class CommentController extends Controller
             return $this->success([], 204);
         }
         return $this->failure("Comment not found", 404);
-
     }
 
 
     public function destroy(int $commentId)
     {
-        $result = Comment::destroy($commentId);
+        $user = Auth::user();
+        $result = $user->comments()->where('id', '=', $commentId)->delete();
         if($result)
             return $this->success([],204);
         return $this->failure('Comment not found', 404);
