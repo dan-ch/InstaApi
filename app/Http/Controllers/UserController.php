@@ -21,15 +21,16 @@ class UserController extends Controller
 
     public function show(int $userId)
     {
-        sleep(1);
         $authUser = Auth::user();
-        $user = User::query()->withCount(['posts', 'followers', 'followed'])
-            ->with(['posts', 'posts.comments', 'posts.comments.author'])->find($userId);
+        $user = User::query()->withCount(['posts', 'followers', 'followed'])->find($userId);
+//        $posts = Post::query()->where('author_id', '=', $userId)
+//            ->withCount(['likes', 'comments'])->with('comments.author')->paginate(10);
         if($user){
             $user->setAttribute('isFollowed', $user->isFollowed($authUser->id));
-            foreach ($user->posts as $post){
-                $post->setAttribute('isLiked', $post->isLiked($user->id));
-            }
+//            foreach ($posts as $post){
+//                $post->setAttribute('isLiked', $post->isLiked($user->id));
+//            }
+//            $user['posts'] = $posts;
             return $this->success($user);
         }
         return $this->failure('User not found', 404);
@@ -72,7 +73,8 @@ class UserController extends Controller
 
     public function createdPosts(int $userId){
         $result = Post::query()->where('author_id', '=', $userId)
-            ->withCount(['likes', 'comments'])->with('comments.author')->get();
+            ->withCount(['likes', 'comments'])->with(['author', 'comments.author'])
+            ->orderByDesc('created_at')->paginate(9);
         return $this->success($result);
     }
 

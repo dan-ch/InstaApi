@@ -77,11 +77,6 @@ class PostController extends Controller
         $data = $request->validated();
         $post = Post::find($postId);
         if($post){
-            if($data['photo']){
-                Storage::delete('images/'.pathinfo($post->img_url, PATHINFO_BASENAME));
-                $path = Storage::put('images', $data['photo'], 'public');
-                $post->img_url = $path;
-            }
             $post->update($data);
             return $this->success([], 204);
         }

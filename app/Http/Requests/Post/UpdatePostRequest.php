@@ -27,8 +27,7 @@ class UpdatePostRequest extends FormRequest
     {
         return [
             'description' => ['sometimes', 'string'],
-            'tags' => ['sometimes', 'string'],
-            'photo' => ['sometimes', 'image'],
+            'tags' => ['sometimes', 'string', 'nullable'],
         ];
     }
 }

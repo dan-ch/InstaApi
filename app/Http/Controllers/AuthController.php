@@ -67,14 +67,6 @@ class AuthController extends Controller
         return $this->success(['message' => 'Logged out']);
     }
 
-    public function redirectToProvider(string $provider)
-    {
-        if (!$this->validateProvider($provider)) {
-            return $this->failure(['message' => 'Invalid provider. Use Google or Github']);
-        }
-
-        return Socialite::driver($provider)->stateless()->redirect();
-    }
 
     public function providerCallback(Request $request, string $provider)
     {
@@ -98,7 +90,6 @@ class AuthController extends Controller
             return $this->failure(['error' => 'Invalid credentials provided.'], 422);
         }
 
-        //$userCreated = User::query()->firstWhere('email', $user->getEmai());
 
         $userCreated = User::query()->firstOrCreate(
             [
@@ -126,8 +117,13 @@ class AuthController extends Controller
         $user = Auth::user();
         $user->password = Hash::make($data['password']);
         $user->save();
-        return $this->success(['chuj' => 'wielki']);
+        return $this->success([], 204);
     }
+
+    public function sendResetLink(Request $request){}
+
+    public function sendResetResponse(Request $request){}
+
 
     private function validateProvider($provider)
     {
