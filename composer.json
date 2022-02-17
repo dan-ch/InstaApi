@@ -13,6 +13,7 @@
         "laravel/framework": "^8.65",
         "laravel/sanctum": "^2.12",
         "laravel/socialite": "^5.2",
+        "laravel/telescope": "^4.7",
         "laravel/tinker": "^2.5",
         "socialiteproviders/tiktok": "^4.0"
     },
@@ -21,7 +22,6 @@
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
-        "laravel/telescope": "^4.7",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^5.10",
         "phpunit/phpunit": "^9.5.10"
