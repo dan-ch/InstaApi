@@ -17,7 +17,6 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->string('description')->nullable();
             $table->string('img_url');
-            $table->string('min_img_url');
             $table->string('tags')->nullable();
             $table->bigInteger('author_id');
             $table->timestamps();

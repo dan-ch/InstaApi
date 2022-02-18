@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Post\StorePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
+use App\Http\Services\ImageService;
 use App\Http\Traits\ResponseApi;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
@@ -16,6 +17,15 @@ use Illuminate\Support\Facades\Storage;
 class PostController extends Controller
 {
     use ResponseApi;
+
+    private ImageService $imageService;
+
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
 
     public function index(): JsonResponse
     {
@@ -33,16 +43,15 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $user = Auth::user();
-        $path = Storage::put('images', $data['photo'], 'public');
+        $cloudinaryResponse = $this->imageService->uploadImage($data['photo']->getRealPath(), 'posts');
         $post =  Post::create([
             'description' => $data['description'] ?? null,
             'tags' => $data['tags'] ?? null,
             'author_id' => $user->id,
-            'img_url' => url('storage/'.$path),
+            'img_url' => $cloudinaryResponse['url'],
+            'cloud_id' => $cloudinaryResponse['cloud_id'],
         ]);
-        $path = '/api/posts/'.$post['id'];
-        return $this->success($path, 201);
-
+        return $this->success($post->img_url, 201);
     }
 
 
@@ -85,9 +94,11 @@ class PostController extends Controller
 
     public function destroy(int $postId)
     {
-        $result = Auth::user()->posts()->find($postId)->delete();
-        if(!$result)
+        $post = Auth::user()->posts()->find($postId);
+        if(!$post)
             return $this->failure('Post not found', 404);
+        $this->imageService->deleteImage($post->cloud_id);
+        $post->delete();
         return $this->success([], 204);
     }
 

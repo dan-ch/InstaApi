@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Services\ImageService;
 use App\Http\Traits\ResponseApi;
 use App\Models\Post;
 use App\Models\User;
@@ -12,6 +13,14 @@ use Illuminate\Support\Facades\Storage;
 class UserController extends Controller
 {
     use ResponseApi;
+
+    private ImageService $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
 
     public function index()
     {
@@ -43,10 +52,12 @@ class UserController extends Controller
         $user = Auth::user();
         $response = [];
         if($data['avatar'] ?? false){
-            Storage::delete('avatars/'.pathinfo($user->avatar_url, PATHINFO_BASENAME));
-            $path = Storage::put('avatars', $data['avatar'], 'public');
-            $user->avatar_url = url('storage/'.$path);
-            $response['avatar_url'] = url('storage/'.$path);
+            if($user->cloud_id)
+                $this->imageService->deleteImage($user->cloud_id);
+            $cloudinaryResponse = $this->imageService->uploadImage($data['avatar']->getRealPath(), 'avatars');
+            $user->avatar_url = $cloudinaryResponse['url'];
+            $user->cloud_id = $cloudinaryResponse['cloud_id'];
+            $response['avatar_url'] = $user->avatar_url;
         }
         if($data['name'] ?? false){
             $user->name = $data['name'];

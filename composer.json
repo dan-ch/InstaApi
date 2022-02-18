@@ -15,7 +15,8 @@
         "laravel/socialite": "^5.2",
         "laravel/telescope": "^4.7",
         "laravel/tinker": "^2.5",
-        "socialiteproviders/tiktok": "^4.0"
+        "socialiteproviders/tiktok": "^4.0",
+        "cloudinary/cloudinary_php": "^2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.6",

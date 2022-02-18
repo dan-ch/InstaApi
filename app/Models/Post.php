@@ -16,7 +16,12 @@ class Post extends Model
         'img_url',
         'min_img_url',
         'tags',
-        'author_id'
+        'author_id',
+        'cloud_id',
+    ];
+
+    protected $hidden = [
+        'cloud_id',
     ];
 
     protected $casts = [

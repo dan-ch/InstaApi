@@ -90,7 +90,6 @@ class AuthController extends Controller
             return $this->failure(['error' => 'Invalid credentials provided.'], 422);
         }
 
-
         $userCreated = User::query()->firstOrCreate(
             [
                 'email' => $user->getEmail()
@@ -98,7 +97,6 @@ class AuthController extends Controller
             [
                 'email_verified_at' => Carbon::now(),
                 'name' => $user->getName() ?? $user->user['login'],
-                'avatar' => $user->getAvatar(),
                 'password' => Hash::make(Random::generate(15)),
             ]
         );

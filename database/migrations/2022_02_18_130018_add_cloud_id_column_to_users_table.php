@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DropMinImgUrlColumnFromPostsTable extends Migration
+class AddCloudIdColumnToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class DropMinImgUrlColumnFromPostsTable extends Migration
      */
     public function up()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn('min_img_url');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('cloud_id')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ class DropMinImgUrlColumnFromPostsTable extends Migration
      */
     public function down()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->string('min_img_url');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('cloud_id');
         });
     }
 }
