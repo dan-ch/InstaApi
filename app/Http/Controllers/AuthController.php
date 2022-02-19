@@ -81,8 +81,8 @@ class AuthController extends Controller
                     'Accept' => 'application/json'
                 ])->post('https://github.com/login/oauth/access_token', [
                     'code' => $token,
-                    'client_id' => '8da553fa87f13af3b9c5',
-                    'client_secret' => '63aaddea79aacdb96d233267c10a41b53e82b9f2',
+                    'client_id' => config("socialite.github.clientId"),
+                    'client_secret' => config("socialite.github.clientSecret"),
                 ])->json()['access_token'];
             }
             $user = Socialite::driver($provider)->stateless()->userFromToken($token);
