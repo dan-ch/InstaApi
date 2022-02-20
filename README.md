@@ -1,65 +1,123 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# InstakilogramApi
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Description
 
-## About Laravel
+InstakilogramApi is a Laravel backend application(API)/part of Instakilogram app which is a photo sharing application, just like the well-known Instagram, that contains core functionalities of this type of software(more in section below). The API takes care of the consistency and validation of the data coming in and sent to the frontend application that is built with React.js. Frontend app you can find on my GitHub at this link: <https://github.com/dan-ch/InstakilogramUi>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+While working on this project, I learned primarily:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- how to secure and connect the Laravel API with the front-end application using Sanctum and Socialite
+- how to create local file sotrage and connect API to Cloudinary file storage
+- how to use Algolia to search for users and posts
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+- CRUD operation on posts
+- Adding and deleting post comments
+- Like system
+- Searching for users and posts using Algolia
+- Following other users
+- "Wall" based on followed users posts
+- Posts pagination on "wall" and user profile
+- User registration
+- Sign in with Google and Github using Socialite
+- Authentication using Sanctum token
+- Custom password validation
+- Integration with Cloudinary platform to store posts images
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Built with
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- [Laravel](https://laravel.com/) ^8.65
+- [Algolia scout-extended](https://www.algolia.com/doc/framework-integration/laravel/getting-started/introduction-to-scout-extended/?client=php) ^1.20
+- [Cloudinary-php](https://cloudinary.com/documentation/php_integration) ^2
+- [Sanctum](https://laravel.com/docs/8.x/sanctum) ^2.12
+- [Socialite](https://laravel.com/docs/8.x/socialite) ^5.2
 
-## Laravel Sponsors
+Dev dependencies:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+- [Telescope](https://laravel.com/docs/8.x/telescope) ^4.7
+- [Faker](https://laravel.com/docs/7.x/database-testing) ^1.9.1
 
-### Premium Partners
+## Getting started
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+API is deployed on Heroku at this link: <https://instakilogram-api.herokuapp.com/>
 
-## Contributing
+You can try the Instakilogram using fronted application at this link: <https://dan-ch.github.io/InstakilogramUi/>
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Prerequisites
 
-## Code of Conduct
+- php 8.1
+- [Composer](https://getcomposer.org/) 2.2.6
+- account on [Cloudinary](https://cloudinary.com/) platform
+- account on [Algolia](https://www.algolia.com/) platform
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Installation
 
-## Security Vulnerabilities
+1. Clone repository
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    ```txt
+    git clone https://github.com/dan-ch/InstaApi
+    ```
+
+2. Install requierd packages using Composer:
+
+    ```txt
+    composer install
+    ```
+
+3. In main folder create `.env` file and provide valid enviroment variables like so:
+
+    ```env
+    APP_NAME=Laravel
+    APP_ENV=local
+    APP_KEY=your_app_key
+    APP_DEBUG=true
+    APP_URL=http://localhost:8000
+
+    LOG_CHANNEL=stack
+    LOG_DEPRECATIONS_CHANNEL=null
+    LOG_LEVEL=debug
+    
+    # for ex. sqlite
+    DB_CONNECTION=sqlite
+
+    BROADCAST_DRIVER=log
+    CACHE_DRIVER=file
+    FILESYSTEM_DRIVER=public
+    QUEUE_CONNECTION=sync
+    SESSION_DRIVER=file
+    SESSION_LIFETIME=120
+
+    GITHUB_CLIENT_ID=your_github_client_id
+    GITHUB_CLIENT_SECRET=your_github_client_secret
+    GITHUB_REDIRECT_URI=http://127.0.0.1:8000/api/login/gihtub/callback
+
+    GOOGLE_CLIENT_ID=your_google_client_id
+    GOOGLE_CLIENT_SECRET=your_google_client_secret
+    GOOGLE_REDIRECT_URI=http://127.0.0.1:8000/api/login/google/callback
+
+    ALGOLIA_APP_ID=your_algolia_app_id
+    ALGOLIA_SECRET=your_algolia_secret
+
+    CLOUDINARY_URL=your_cloudinary_url
+    ```
+
+4. If you are using sqlite database in `/database` folder create `database.sqlite` file.
+
+5. Run the migrations:
+
+    ```txt
+    php artisan migrate
+    ```
+
+## Usage
+
+To run the application simply paste and run the following command in your CLI
+
+```txt
+php artisan serve
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Distributed under the MIT License. See `LICENSE.txt`.
